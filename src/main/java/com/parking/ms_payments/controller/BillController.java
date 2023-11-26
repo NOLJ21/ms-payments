@@ -19,6 +19,16 @@ public class BillController {
     @Autowired
     private BillService billService;
 
+    @GetMapping("/hola_mundo")
+    public ResponseEntity<String> holaMundo() {
+        try {
+            return ResponseEntity.ok("Hola mundo");
+        } catch (Exception e) {
+            log.error("Error al obtener la lista de facturas", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/all_by_date_range")
     public ResponseEntity<List<Bill>> getAllBillsByDateRange(DateRangeDto dateRangeDto) {
         try {
