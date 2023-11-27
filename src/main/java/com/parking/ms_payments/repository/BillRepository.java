@@ -12,6 +12,9 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
     @Query("SELECT b FROM Bill b, Reserve r WHERE b.reserve.id = r.id AND r.startDate >= :fechaInicio AND r.endDate <= :fechaFin")
     List<Bill> getReservesByRange(Date fechaInicio, Date fechaFin);
 
+    @Query("SELECT r FROM Reserve r WHERE r.customer.id = :customerId")
+    List<Reserve> findAllById2(Long customerId);
+
     @Query("SELECT b FROM Bill b WHERE b.id = :id")
     Bill findById(long id);
 }

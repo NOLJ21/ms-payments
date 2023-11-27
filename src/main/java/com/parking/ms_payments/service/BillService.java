@@ -78,4 +78,9 @@ public class BillService {
             log.error("Error al guardar la factura", e);
         }
     }
+
+    public List<Reserve> getReservesByUser(Long id) {
+        List<Reserve> reserves = billRepository.findAllById2(id);
+        return reserves;
+    }
 }

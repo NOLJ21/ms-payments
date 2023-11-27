@@ -40,6 +40,17 @@ public class BillController {
         }
     }
 
+    @GetMapping("/all/{id}")
+    public ResponseEntity<List<Reserve>> getAllBillsByUser(@PathVariable Long id) {
+        try {
+            List<Reserve> bills = billService.getReservesByUser(id);
+            return ResponseEntity.ok(bills);
+        } catch (Exception e) {
+            log.error("Error al obtener la lista de facturas", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Bill> getBillById(@PathVariable Long id) {
         try {
