@@ -9,12 +9,14 @@ import com.parking.ms_payments.repository.BillRepository;
 import com.parking.ms_payments.repository.ReserveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -28,6 +30,15 @@ public class BillService {
 
     @Autowired
     private ReserveService reserveService;
+
+    @Autowired
+    private KeycloakService keycloakService;
+
+    @Value("${token.resource-id}")
+    private String keycloakClient;
+
+    @Value("${token.private-key}")
+    private String keycloakPrivateKey;
 
     public List<Bill> getReservesByRange(DateRangeDto dateRangeDto) {
         try {
@@ -52,7 +63,13 @@ public class BillService {
 
     public void saveBill(BillInfoDto billInfoDto) {
         try {
-            ResponseEntity<Reserve> reserveResponseEntity = reserveService.getReserveById(billInfoDto.getIdReserve());
+            Map<String, String> data = Map.of(
+                    "grant_type", "client_credentials",
+                    "client_id", keycloakClient,
+                    "client_secret", keycloakPrivateKey);
+            String token = "Bearer " + keycloakService.getToken(data).get("access_token");
+
+            ResponseEntity<Reserve> reserveResponseEntity = reserveService.getReserveById(token, billInfoDto.getIdReserve());
             Reserve reserve = reserveResponseEntity.getBody();
 
             // convertir la fecha de inicio de la reserva a Date
